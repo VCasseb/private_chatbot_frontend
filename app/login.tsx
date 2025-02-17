@@ -12,7 +12,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("https://chatgptbotia-geghh4dpcrc2cndr.brazilsouth-01.azurewebsites.net/login", {
+      const response = await axios.post("https://privatechat-b4g0apaxfjbzeubr.brazilsouth-01.azurewebsites.net/login", {
         email,
         password,
       });
