@@ -3,8 +3,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Send } from "lucide-react";
-
-// 📌 Estilos com Styled Components
+// Estilos com Styled Components
 const Container = styled.div`
   display: flex;
   height: 100vh;
@@ -14,31 +13,22 @@ const Container = styled.div`
   font-family: 'Inter', sans-serif;
 `;
 
-const Sidebar = styled.div`
-  position: fixed;
-  inset-y: 0;
-  left: 0;
-  width: 80px;
-  background: linear-gradient(180deg, #3182ce, #2563eb);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  font-weight: bold;
-  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
-`;
+
 
 const MainContent = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100vh;
-  margin-left: 80px;
+  padding-left: clamp(20px, 20vw, 600px);
+  padding-right: clamp(20px, 20vw, 600px);
 `;
+
+
 
 const Header = styled.div`
   padding: 1.5rem;
-  background: linear-gradient(90deg, #3182ce, #2563eb);
+
   text-align: center;
   font-weight: bold;
   font-size: 1.5rem;
@@ -76,7 +66,7 @@ const InputContainer = styled.div`
   display: flex;
   align-items: center;
   padding: 1.5rem;
-  background: linear-gradient(90deg, #3182ce, #2563eb);
+
   box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
 `;
 
@@ -114,14 +104,58 @@ const Button = styled.button`
   &:active {
     transform: scale(0.95);
   }
-`;
+`
+const LoadingMessage = styled.div`
+  max-width: 60%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1a202c, #2d3748);
+  color: white;
+  align-self: flex-start;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  animation: colorChange 2s infinite alternate, fadeIn 0.5s ease-in-out;
+
+  @keyframes colorChange {
+    0% {
+      background: linear-gradient(135deg,rgba(26, 32, 44, 0.12), #2d3748);
+    }
+    50% {
+      background: linear-gradient(135deg,rgba(26, 32, 44, 0.46), #2d3748);
+    }
+    100% {
+      background: linear-gradient(135deg, #1a202c, #2d3748);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  `
+
+
+  
+;
+
+;
 
 //  Componente Principal do Chatbot
 export default function Chatbot() {
-  const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([]);
+  const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([
+    { text: "You can start by asking anything about Vini, such as his age, current projects, job, and more!", isUser: false } // Mensagem inicial
+  ]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-// 📌 Função para enviar mensagem
+  
 const sendMessage = async () => {
   if (!input.trim()) return;
 
@@ -133,13 +167,14 @@ const sendMessage = async () => {
   setInput("");
 
   try {
+    setIsLoading(true);
     // Enviar a mensagem para o backend
-    const response = await fetch('http://127.0.0.1:8000/gpt/chat', {  // Altere para a URL correta do seu backend
+    const response = await fetch('http://127.0.0.1:8000/perguntar/', {  // Altere para a URL correta do seu backend
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message: input }),
+      body: JSON.stringify({ pergunta: input }),  // Alterado de "message" para "pergunta"
     });
 
     if (!response.ok) {
@@ -148,35 +183,39 @@ const sendMessage = async () => {
 
     // Receber a resposta do backend (OpenAI)
     const data = await response.json();
-    const botMessage = { text: data.response, isUser: false };
+    const botMessage = { text: data.resposta, isUser: false };
 
     console.log(botMessage); // Verifique o conteúdo da resposta
-    
+
     // Adicionar a resposta do bot
+    setIsLoading(false);
     setMessages((prev) => [...prev, botMessage]);
   } catch (error) {
+    setIsLoading(false);
     console.error('Erro ao enviar mensagem:', error);
     const errorMessage = { text: 'Desculpe, algo deu errado. Tente novamente mais tarde.', isUser: false };
     setMessages((prev) => [...prev, errorMessage]);
   }
 };
 
+  
+
   return (
     <Container>
-      <Sidebar>🤖</Sidebar>
       <MainContent>
-        <Header>Chatbot AI</Header>
+        <Header>Vini AI Assistant</Header>
         <ChatContainer>
           {messages.map((msg, index) => (
             <Message key={index} $isUser={msg.isUser}>
               {msg.text}
             </Message>
           ))}
+          {isLoading && <LoadingMessage>...</LoadingMessage>}
         </ChatContainer>
         <InputContainer>
           <Input
             type="text"
-            placeholder="Digite sua mensagem..."
+            placeholder="Type your message"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && sendMessage()}
