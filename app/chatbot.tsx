@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Send } from "lucide-react";
+
 // Estilos com Styled Components
 const Container = styled.div`
   display: flex;
