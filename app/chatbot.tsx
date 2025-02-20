@@ -169,7 +169,7 @@ const sendMessage = async () => {
   try {
     setIsLoading(true);
     // Enviar a mensagem para o backend
-    const response = await fetch('http://127.0.0.1:8000/perguntar/', {  // Altere para a URL correta do seu backend
+    const response = await fetch('https://privatechat-b4g0apaxfjbzeubr.brazilsouth-01.azurewebsites.net/perguntar/', {  // Altere para a URL correta do seu backend
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -193,7 +193,7 @@ const sendMessage = async () => {
   } catch (error) {
     setIsLoading(false);
     console.error('Erro ao enviar mensagem:', error);
-    const errorMessage = { text: 'Desculpe, algo deu errado. Tente novamente mais tarde.', isUser: false };
+    const errorMessage = { text: 'Sorry, something is wrong :/', isUser: false };
     setMessages((prev) => [...prev, errorMessage]);
   }
 };
