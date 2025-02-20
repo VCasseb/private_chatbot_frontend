@@ -148,15 +148,17 @@ const LoadingMessage = styled.div`
 
 ;
 
+let firstmessage = true;
+
 //  Componente Principal do Chatbot
 export default function Chatbot() {
   const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([
-    { text: "You can start by asking anything about Vini, such as his age, current projects, job, and more!", isUser: false } // Mensagem inicial
+    { text: "Hello! Before we get started, can you tell me who company are you from?", isUser: false } // Mensagem inicial
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  
+  //You can start by asking anything about Vini, such as his age, current projects, job, and more!
 const sendMessage = async () => {
   if (!input.trim()) return;
 
@@ -166,6 +168,12 @@ const sendMessage = async () => {
 
   // Limpar o input
   setInput("");
+
+  if(firstmessage){
+    const errorMessage = { text: 'Thank you! Now you can start by asking anything about Vini, such as his age, current projects, job, and more!', isUser: false };
+    setMessages((prev) => [...prev, errorMessage]);
+    firstmessage = false;
+  }
 
   try {
     setIsLoading(true);
