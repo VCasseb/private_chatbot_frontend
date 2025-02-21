@@ -244,7 +244,7 @@ let firstmessage = true;
 //  Componente Principal do Chatbot
 export default function Chatbot() {
   const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([
-    { text: "Hello! Before we get started, can you tell me who company are you from?", isUser: false } // Mensagem inicial
+    { text: "Hello! Before we get started, can you tell me what company are you from?", isUser: false } // Mensagem inicial
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
