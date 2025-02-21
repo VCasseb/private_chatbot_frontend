@@ -240,6 +240,8 @@ const LoadingMessage = styled.div`
 ;
 
 let firstmessage = true;
+const currentTime = new Date();
+const formattedTime = currentTime.toISOString(); // Exemplo de formatação para um formato padrão (ISO 8601)
 
 //  Componente Principal do Chatbot
 export default function Chatbot() {
@@ -263,6 +265,8 @@ const sendMessage = async () => {
     const errorMessage = { text: 'Thank you! Now you can start by asking anything about Vini, such as his age, current projects, job, and more!', isUser: false };
     setMessages((prev) => [...prev, errorMessage]);
     firstmessage = false;
+    localStorage.setItem('first_message', input);
+    localStorage.setItem('dtsent', formattedTime);
     //setIsLoading(true);
     try {
       
@@ -272,7 +276,7 @@ const sendMessage = async () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ company: input[0] }),
+        body: JSON.stringify({ company: input }),
       })
       .then(response => {
         if (!response.ok) {
