@@ -263,6 +263,30 @@ const sendMessage = async () => {
     const errorMessage = { text: 'Thank you! Now you can start by asking anything about Vini, such as his age, current projects, job, and more!', isUser: false };
     setMessages((prev) => [...prev, errorMessage]);
     firstmessage = false;
+    //setIsLoading(true);
+    try {
+      
+      // Enviar a mensagem sem bloquear o fluxo principal
+      fetch('https://testdockervinichat.azurewebsites.net/sentdata/', {  
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ company: input[0] }),
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro ao enviar mensagem');
+        }
+      })
+      .catch(error => {
+        console.error('Error to send data', error);
+      });
+    
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    }
+
   }else{
 
   try {
