@@ -173,12 +173,12 @@ const sendMessage = async () => {
     const errorMessage = { text: 'Thank you! Now you can start by asking anything about Vini, such as his age, current projects, job, and more!', isUser: false };
     setMessages((prev) => [...prev, errorMessage]);
     firstmessage = false;
-  }
+  }else{
 
   try {
     setIsLoading(true);
     // Enviar a mensagem para o backend
-    const response = await fetch('https://privatechat-b4g0apaxfjbzeubr.brazilsouth-01.azurewebsites.net/perguntar/', {  // Altere para a URL correta do seu backend
+    const response = await fetch('https://testdockervinichat.azurewebsites.net/perguntar/', {  // Altere para a URL correta do seu backend
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -205,6 +205,7 @@ const sendMessage = async () => {
     const errorMessage = { text: 'Sorry, something is wrong :/', isUser: false };
     setMessages((prev) => [...prev, errorMessage]);
   }
+}
 };
 
   
