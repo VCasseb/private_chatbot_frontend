@@ -21,8 +21,11 @@ const MainContent = styled.div`
   flex-direction: column;
   flex: 1;
   height: 100vh;
-  padding-left: clamp(20px, 20vw, 600px);
-  padding-right: clamp(20px, 20vw, 600px);
+
+    @media (min-width: 768px) {
+      padding-left: clamp(20px, 20vw, 600px);
+      padding-right: clamp(20px, 20vw, 600px);
+  }
 `;
 
 
