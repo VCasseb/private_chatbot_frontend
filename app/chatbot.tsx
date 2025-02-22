@@ -240,8 +240,14 @@ const LoadingMessage = styled.div`
 ;
 
 let firstmessage = true;
-const currentTime = new Date();
-const formattedTime = currentTime.toISOString(); // Exemplo de formatação para um formato padrão (ISO 8601)
+
+function generateuserid() {
+  return 'user-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+}
+
+const userid = generateuserid();
+console.log(userid);
+localStorage.setItem('userid', userid);
 
 //  Componente Principal do Chatbot
 export default function Chatbot() {
@@ -255,6 +261,9 @@ export default function Chatbot() {
 const sendMessage = async () => {
   if (!input.trim()) return;
 
+  const currentTime = new Date();
+  const formattedTime = currentTime.toISOString(); // Exemplo de formatação para um formato padrão (ISO 8601)
+
   // Mensagem do usuário
   const userMessage = { text: input, isUser: true };
   setMessages((prev) => [...prev, userMessage]);
@@ -262,41 +271,25 @@ const sendMessage = async () => {
   // Limpar o input
   setInput("");
   if(firstmessage){
-    const errorMessage = { text: 'Thank you! Now you can start by asking anything about Vini, such as his age, current projects, job, and more!', isUser: false };
-    setMessages((prev) => [...prev, errorMessage]);
-    firstmessage = false;
-    localStorage.setItem('first_message', input);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      const errorMessage = { text: 'Thank you! Now you can start by asking anything about Vini, such as his age, current projects, job, and more!', isUser: false };
+      setMessages((prev) => [...prev, errorMessage]);
+    }, 1500); // 1.5 segundos de atraso
+
     localStorage.setItem('dtsent', formattedTime);
-    //setIsLoading(true);
-    try {
-      
-      // Enviar a mensagem sem bloquear o fluxo principal
-      fetch('https://testdockervinichat.azurewebsites.net/sentdata/', {  
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ company: input }),
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro ao enviar mensagem');
-        }
-      })
-      .catch(error => {
-        console.error('Error to send data', error);
-      });
-    
-    } catch (error) {
-      console.error('Unexpected error:', error);
-    }
+    localStorage.setItem('message', input);
+    localStorage.setItem('flag_fm', "true");
+    localStorage.setItem('input_ai', "");
+    localStorage.setItem('contexto_faiss', "");
+    firstmessage = false;
 
   }else{
-
   try {
     setIsLoading(true);
     // Enviar a mensagem para o backend
-    const response = await fetch('https://testdockervinichat.azurewebsites.net/perguntar/', {  // Altere para a URL correta do seu backend
+    const response = await fetch('http://127.0.0.1:8000/perguntar/', {  // Altere para a URL correta do seu backend
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -313,6 +306,11 @@ const sendMessage = async () => {
     const botMessage = { text: data.resposta, isUser: false };
 
     console.log(botMessage); // Verifique o conteúdo da resposta
+    localStorage.setItem('dtsent', formattedTime);
+    localStorage.setItem('message', input);
+    localStorage.setItem('flag_fm', "false");
+    localStorage.setItem('input_ai', data.resposta);
+    localStorage.setItem('contexto_faiss', data.contexto);
 
     // Adicionar a resposta do bot
     setIsLoading(false);
@@ -323,6 +321,47 @@ const sendMessage = async () => {
     const errorMessage = { text: 'Sorry, something is wrong :/', isUser: false };
     setMessages((prev) => [...prev, errorMessage]);
   }
+}
+  //Send to logs
+  try {
+    // Coletar dados do localStorage
+    const dtsent = localStorage.getItem('dtsent');
+    const message = localStorage.getItem('message');
+    const flag_fm = localStorage.getItem('flag_fm');
+    const input_ai = localStorage.getItem('input_ai');
+    const context_faiss = localStorage.getItem('contexto_faiss');
+    const userid = localStorage.getItem('userid');
+
+    // Enviar a requisição com os dados do localStorage
+    fetch('http://127.0.0.1:8000/sentdata/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            dtsent,
+            message, // Incluindo dados do localStorage
+            flag_fm,
+            input_ai,
+            context_faiss,
+            userid
+        }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro ao enviar mensagem');
+        }
+        return response.json(); // Se o backend retornar uma resposta JSON
+    })
+    .then(data => {
+        console.log('Dados enviados com sucesso:', data);
+    })
+    .catch(error => {
+        console.error('Erro ao enviar dados:', error);
+    });
+
+} catch (error) {
+    console.error('Erro inesperado:', error);
 }
 };
 
