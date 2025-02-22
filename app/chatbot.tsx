@@ -363,6 +363,8 @@ const sendMessage = async () => {
 } catch (error) {
     console.error('Erro inesperado:', error);
 }
+
+
 };
 
   
