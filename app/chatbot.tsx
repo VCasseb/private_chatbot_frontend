@@ -7,6 +7,7 @@ import { Send } from "lucide-react";
 // Estilos com Styled Components
 const Container = styled.div`
   display: flex;
+  flex-direction: column; /* Mudança aqui para melhor ajuste em telas pequenas */
   height: 100vh;
   width: 100%;
   background: linear-gradient(135deg, #1a202c, #2d3748);
@@ -14,32 +15,40 @@ const Container = styled.div`
   font-family: 'Inter', sans-serif;
 `;
 
-
-
 const MainContent = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow: hidden; /* Evita overflow no layout */
   height: 100vh;
-  padding-left: clamp(20px, 20vw, 600px);
-  padding-right: clamp(20px, 20vw, 600px);
+
+  @media (min-width: 768px) {
+    padding-left: clamp(20px, 20vw, 600px);
+    padding-right: clamp(20px, 20vw, 600px);
+  }
 `;
 
-
-
 const Header = styled.div`
-  padding: 1.5rem;
-
+  padding: 0.3rem;
   text-align: center;
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.0rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+  @media (min-width: 768px) {
+    padding: 1.5rem;
+    font-size: 1.5rem;
+  }
 `;
 
 const ChatContainer = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 1.5rem;
+    @media (min-width: 768px) {
+    padding-bottom: 20px; /* Aumentei o padding-bottom para mais espaço */
+  }
+  padding-bottom: 120px; /* Aumentei o padding-bottom para mais espaço */
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.05);
@@ -61,14 +70,32 @@ const Message = styled.div<{ $isUser: boolean }>`
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem; /* Ajuste de fonte para telas pequenas */
+  }
+    
 `;
 
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
   padding: 1.5rem;
-
+  padding-top: 1rem; /* Adicionei um padding-top para mais espaço acima do input */
+  padding-bottom: 1.5rem; /* Aumentei o padding-bottom para mais espaço abaixo do input */
   box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+
+  @media (min-width: 768px) {
+    position: static; /* Remove a posição fixa em telas maiores */
+    width: auto;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const Input = styled.input`
@@ -84,6 +111,10 @@ const Input = styled.input`
 
   &::placeholder {
     color: rgba(255, 255, 255, 0.7);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem; /* Ajuste de fonte para telas pequenas */
   }
 `;
 
@@ -105,7 +136,8 @@ const Button = styled.button`
   &:active {
     transform: scale(0.95);
   }
-`
+`;
+
 const LoadingMessage = styled.div`
   max-width: 60%;
   padding: 12px 16px;
@@ -116,19 +148,77 @@ const LoadingMessage = styled.div`
   margin-bottom: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(8px);
-  animation: colorChange 2s infinite alternate, fadeIn 0.5s ease-in-out;
+  animation: colorChange 0.9s infinite alternate, fadeIn 0.5s ease-in-out;
 
-  @keyframes colorChange {
-    0% {
-      background: linear-gradient(135deg,rgba(26, 32, 44, 0.12), #2d3748);
-    }
-    50% {
-      background: linear-gradient(135deg,rgba(26, 32, 44, 0.46), #2d3748);
-    }
-    100% {
-      background: linear-gradient(135deg, #1a202c, #2d3748);
-    }
+@keyframes colorChange {
+  0% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(45, 55, 72));
   }
+  5% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(48, 63, 85));
+  }
+  10% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(51, 70, 97));
+  }
+  15% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(55, 77, 108));
+  }
+  20% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(58, 84, 120));
+  }
+  25% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(61, 91, 132));
+  }
+  30% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(64, 98, 143));
+  }
+  35% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(67, 105, 154));
+  }
+  40% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(72, 112, 166));
+  }
+  45% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(75, 119, 178));
+  }
+  50% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(78, 126, 190));
+  }
+  55% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(81, 133, 201));
+  }
+  60% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(84, 140, 213));
+  }
+  65% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(87, 147, 225));
+  }
+  70% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(92, 154, 237));
+  }
+  75% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(95, 161, 248));
+  }
+  80% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(95, 161, 248));
+  }
+  85% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(95, 161, 248));
+  }
+  90% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(95, 161, 248));
+  }
+  95% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(95, 161, 248));
+  }
+  100% {
+    background: linear-gradient(135deg, rgb(26, 32, 44), rgb(95, 161, 248));
+  }
+}
+
+
+
+
 
   @keyframes fadeIn {
     from {
@@ -140,7 +230,8 @@ const LoadingMessage = styled.div`
       transform: scale(1);
     }
   }
-  `
+`;
+
 
 
   
@@ -153,14 +244,17 @@ let firstmessage = true;
 //  Componente Principal do Chatbot
 export default function Chatbot() {
   const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([
-    { text: "Hello! Before we get started, can you tell me who company are you from?", isUser: false } // Mensagem inicial
+    { text: "Hello! Before we get started, can you tell me what company are you from?", isUser: false } // Mensagem inicial
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  
   //You can start by asking anything about Vini, such as his age, current projects, job, and more!
 const sendMessage = async () => {
   if (!input.trim()) return;
+
+  const currentTime = new Date();
+  const formattedTime = currentTime.toISOString(); // Exemplo de formatação para um formato padrão (ISO 8601)
 
   // Mensagem do usuário
   const userMessage = { text: input, isUser: true };
@@ -168,17 +262,22 @@ const sendMessage = async () => {
 
   // Limpar o input
   setInput("");
-
   if(firstmessage){
     const errorMessage = { text: 'Thank you! Now you can start by asking anything about Vini, such as his age, current projects, job, and more!', isUser: false };
     setMessages((prev) => [...prev, errorMessage]);
     firstmessage = false;
-  }
+    localStorage.setItem('first_message', input);
+    localStorage.setItem('dtsent', formattedTime);
+    localStorage.setItem('input_ai', "");
+    localStorage.setItem('flag_fm', "true");
+    //setIsLoading(true);
+
+  }else{
 
   try {
     setIsLoading(true);
     // Enviar a mensagem para o backend
-    const response = await fetch('https://privatechat-b4g0apaxfjbzeubr.brazilsouth-01.azurewebsites.net/perguntar/', {  // Altere para a URL correta do seu backend
+    const response = await fetch('https://testdockervinichat.azurewebsites.net/perguntar/', {  // Altere para a URL correta do seu backend
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -195,6 +294,10 @@ const sendMessage = async () => {
     const botMessage = { text: data.resposta, isUser: false };
 
     console.log(botMessage); // Verifique o conteúdo da resposta
+    localStorage.setItem('first_message', input);
+    localStorage.setItem('dtsent', formattedTime);
+    localStorage.setItem('input_ai', data.resposta);
+    localStorage.setItem('flag_fm', "false");
 
     // Adicionar a resposta do bot
     setIsLoading(false);
@@ -205,6 +308,51 @@ const sendMessage = async () => {
     const errorMessage = { text: 'Sorry, something is wrong :/', isUser: false };
     setMessages((prev) => [...prev, errorMessage]);
   }
+  //Send to logs
+  try {
+    // Coletar dados do localStorage
+    const first_message = localStorage.getItem('first_message');
+    const dtsent = localStorage.getItem('dtsent');
+    const input_ai = localStorage.getItem('input_ai');
+    const flag_fm = localStorage.getItem('flag_fm');
+
+    // Verificar se os dados necessários estão presentes
+    if (!first_message || !dtsent || !input_ai || !flag_fm) {
+        throw new Error('Dados incompletos no localStorage');
+    }
+
+    // Enviar a requisição com os dados do localStorage
+    fetch('https://testdockervinichat.azurewebsites.net/sentdata/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            company: input, // Supondo que "input" seja uma variável definida em outro lugar
+            first_message, // Incluindo dados do localStorage
+            dtsent,
+            input_ai,
+            flag_fm,
+        }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro ao enviar mensagem');
+        }
+        return response.json(); // Se o backend retornar uma resposta JSON
+    })
+    .then(data => {
+        console.log('Dados enviados com sucesso:', data);
+    })
+    .catch(error => {
+        console.error('Erro ao enviar dados:', error);
+    });
+
+} catch (error) {
+    console.error('Erro inesperado:', error);
+}
+
+}
 };
 
   
@@ -219,7 +367,7 @@ const sendMessage = async () => {
               {msg.text}
             </Message>
           ))}
-          {isLoading && <LoadingMessage>...</LoadingMessage>}
+          {isLoading && <LoadingMessage>Thinking</LoadingMessage>}
         </ChatContainer>
         <InputContainer>
           <Input
