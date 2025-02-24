@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Send } from "lucide-react";
+
+
 
 // Estilos com Styled Components
 const Container = styled.div`
@@ -241,6 +243,53 @@ const LoadingMessage = styled.div`
 
 let firstmessage = true;
 
+function generateuserid() {
+  return 'user-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+}
+
+const userid = generateuserid();
+console.log(userid);
+localStorage.setItem('userid', userid);
+
+// Tipos das mensagens
+interface Message {
+  text: string;
+  isUser: boolean;
+}
+
+// Animação de transparência gradual
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+// Span animado
+const AnimatedSpan = styled.span<{ delay: number }>`
+  opacity: 0;
+  animation: ${fadeIn} 0.5s forwards;
+  animation-delay: ${({ delay }) => delay}ms;
+`
+
+// Função para simular digitação
+const typeMessage = (text: string, setMessages: React.Dispatch<React.SetStateAction<Message[]>>, isUser: boolean) => {
+  const message: Message = { text: "", isUser };
+  setMessages((prev) => [...prev, message]);
+
+  let index = 0;
+  const interval = setInterval(() => {
+    if (index < text.length) {
+      message.text += text[index];
+      setMessages((prev) => [...prev.slice(0, -1), message]);
+      index++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 10)
+};
 //  Componente Principal do Chatbot
 export default function Chatbot() {
   const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([
@@ -263,21 +312,25 @@ const sendMessage = async () => {
   // Limpar o input
   setInput("");
   if(firstmessage){
-    const errorMessage = { text: 'Thank you! Now you can start by asking anything about Vini, such as his age, current projects, job, and more!', isUser: false };
-    setMessages((prev) => [...prev, errorMessage]);
-    firstmessage = false;
-    localStorage.setItem('first_message', input);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      const botMessage = 'Thank you! Now you can start by asking anything about Vini, such as his age, current projects, job, and more!';
+      typeMessage(botMessage, setMessages, false);
+    }, 1500); // 1.5 segundos de atraso
+
     localStorage.setItem('dtsent', formattedTime);
-    localStorage.setItem('input_ai', "");
+    localStorage.setItem('message', input);
     localStorage.setItem('flag_fm', "true");
-    //setIsLoading(true);
+    localStorage.setItem('input_ai', "");
+    localStorage.setItem('contexto_faiss', "");
+    firstmessage = false;
 
   }else{
-
   try {
     setIsLoading(true);
     // Enviar a mensagem para o backend
-    const response = await fetch('https://testdockervinichat.azurewebsites.net/perguntar/', {  // Altere para a URL correta do seu backend
+    const response = await fetch('http://127.0.0.1:8000/perguntar/', {  // Altere para a URL correta do seu backend
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -294,10 +347,11 @@ const sendMessage = async () => {
     const botMessage = { text: data.resposta, isUser: false };
 
     console.log(botMessage); // Verifique o conteúdo da resposta
-    localStorage.setItem('first_message', input);
     localStorage.setItem('dtsent', formattedTime);
-    localStorage.setItem('input_ai', data.resposta);
+    localStorage.setItem('message', input);
     localStorage.setItem('flag_fm', "false");
+    localStorage.setItem('input_ai', data.resposta);
+    localStorage.setItem('contexto_faiss', data.contexto);
 
     // Adicionar a resposta do bot
     setIsLoading(false);
@@ -308,31 +362,30 @@ const sendMessage = async () => {
     const errorMessage = { text: 'Sorry, something is wrong :/', isUser: false };
     setMessages((prev) => [...prev, errorMessage]);
   }
+}
   //Send to logs
   try {
     // Coletar dados do localStorage
-    const first_message = localStorage.getItem('first_message');
     const dtsent = localStorage.getItem('dtsent');
-    const input_ai = localStorage.getItem('input_ai');
+    const message = localStorage.getItem('message');
     const flag_fm = localStorage.getItem('flag_fm');
-
-    // Verificar se os dados necessários estão presentes
-    if (!first_message || !dtsent || !input_ai || !flag_fm) {
-        throw new Error('Dados incompletos no localStorage');
-    }
+    const input_ai = localStorage.getItem('input_ai');
+    const context_faiss = localStorage.getItem('contexto_faiss');
+    const userid = localStorage.getItem('userid');
 
     // Enviar a requisição com os dados do localStorage
-    fetch('https://testdockervinichat.azurewebsites.net/sentdata/', {
+    fetch('http://127.0.0.1:8000/sentdata/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            company: input, // Supondo que "input" seja uma variável definida em outro lugar
-            first_message, // Incluindo dados do localStorage
             dtsent,
-            input_ai,
+            message, // Incluindo dados do localStorage
             flag_fm,
+            input_ai,
+            context_faiss,
+            userid
         }),
     })
     .then(response => {
@@ -352,36 +405,40 @@ const sendMessage = async () => {
     console.error('Erro inesperado:', error);
 }
 
-}
+
 };
 
   
 
-  return (
-    <Container>
-      <MainContent>
-        <Header>Vini AI Assistant</Header>
-        <ChatContainer>
-          {messages.map((msg, index) => (
-            <Message key={index} $isUser={msg.isUser}>
-              {msg.text}
-            </Message>
-          ))}
-          {isLoading && <LoadingMessage>Thinking</LoadingMessage>}
-        </ChatContainer>
-        <InputContainer>
-          <Input
-            type="text"
-            placeholder="Type your message"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-          />
-          <Button onClick={sendMessage}>
-            <Send size={20} color="white" />
-          </Button>
-        </InputContainer>
-      </MainContent>
-    </Container>
-  );
+return (
+  <Container>
+    <MainContent>
+      <Header>Vini AI Assistant</Header>
+      <ChatContainer>
+        {messages.map((msg, index) => (
+          <Message key={index} $isUser={msg.isUser}>
+            {msg.text.split('').map((char, i) => (
+              <AnimatedSpan key={i} delay={i * 3}>
+                {char}
+              </AnimatedSpan>
+            ))}
+          </Message>
+        ))}
+        {isLoading && <LoadingMessage>Thinking</LoadingMessage>}
+      </ChatContainer>
+      <InputContainer>
+        <Input
+          type="text"
+          placeholder="Type your message"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+        />
+        <Button onClick={sendMessage}>
+          <Send size={20} color="white" />
+        </Button>
+      </InputContainer>
+    </MainContent>
+  </Container>
+);
 }
