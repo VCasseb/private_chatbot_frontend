@@ -395,7 +395,7 @@ export default function Chatbot() {
     } else {
       try {
         setIsLoading(true);
-        const response = await fetch('http://127.0.0.1:8000/perguntar/', {
+        const response = await fetch('https://privatechatbotia-dpbye3cdbmandchy.brazilsouth-01.azurewebsites.net/perguntar/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -434,7 +434,7 @@ export default function Chatbot() {
       const context_faiss = localStorage.getItem('contexto_faiss');
       const userid = localStorage.getItem('userid');
 
-      fetch('http://127.0.0.1:8000/sentdata/', {
+      fetch('https://privatechatbotia-dpbye3cdbmandchy.brazilsouth-01.azurewebsites.net/sentdata/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
