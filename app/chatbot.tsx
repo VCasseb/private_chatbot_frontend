@@ -327,8 +327,10 @@ function generateuserid() {
 
 const userid = generateuserid();
 console.log(userid);
-localStorage.setItem('userid', userid);
-
+// Garantir que o localStorage está acessível antes de usá-lo
+if (typeof window !== "undefined" && window.localStorage) {
+  localStorage.setItem('userid', userid);
+}
 //  Componente Principal do Chatbot
 export default function Chatbot() {
   const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([
@@ -386,11 +388,13 @@ export default function Chatbot() {
         setMessages((prev) => [...prev, botMessage]);
         setShowSuggestions(true); // Exibe as sugestões após a primeira mensagem
       }, 1500);
+      if (typeof window !== "undefined" && window.localStorage) {
       localStorage.setItem('dtsent', formattedTime);
       localStorage.setItem('message', msg);
       localStorage.setItem('flag_fm', "true");
       localStorage.setItem('input_ai', "");
       localStorage.setItem('contexto_faiss', "");
+      }
       firstmessage = false;
     } else {
       try {
@@ -409,12 +413,13 @@ export default function Chatbot() {
         const botMessage = { text: data.resposta, isUser: false };
 
         console.log(botMessage);
+        if (typeof window !== "undefined" && window.localStorage) {
         localStorage.setItem('dtsent', formattedTime);
         localStorage.setItem('message', msg);
         localStorage.setItem('flag_fm', "false");
         localStorage.setItem('input_ai', data.resposta);
         localStorage.setItem('contexto_faiss', data.contexto);
-
+        }
         setMessages((prev) => [...prev, botMessage]);
       } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
@@ -427,6 +432,7 @@ export default function Chatbot() {
 
     // Send to logs
     try {
+      if (typeof window !== "undefined" && window.localStorage) {
       const dtsent = localStorage.getItem('dtsent');
       const message = localStorage.getItem('message');
       const flag_fm = localStorage.getItem('flag_fm');
@@ -460,7 +466,7 @@ export default function Chatbot() {
         .catch(error => {
           console.error('Erro ao enviar dados:', error);
         });
-    } catch (error) {
+    }} catch (error) {
       console.error('Erro inesperado:', error);
     }
   };
