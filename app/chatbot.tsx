@@ -339,9 +339,10 @@ export default function Chatbot() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([
-    "How old is Vinicius?",
-    "About Vinicius",
+    "Summary of Vinicius",
     "What certifications does Vinicius have?",
+    "About Vinicius",
+    "How old is Vinicius?",
     "Tell me about graduation of Vinicius?",
     "What is vinicius's email?",
     "Which company does Vinicius work for?",
@@ -380,6 +381,8 @@ export default function Chatbot() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
+
+
     if (firstmessage) {
       setIsLoading(true);
       setTimeout(() => {
@@ -397,6 +400,17 @@ export default function Chatbot() {
       }
       firstmessage = false;
     } else {
+                // Se a mensagem do usuário mencionar "LinkedIn", envie a imagem clicável
+      //if (msg.toLowerCase().includes("linkedin")) {
+      //  const botMessage = {
+      //    text: `<a href="https://www.linkedin.com/in/vinicius-cezar-casseb-a1b803189/" target="_blank">
+      //            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" width="50"/>
+      //          </a>`,
+      //    isUser: false,
+      //  };
+      //  setMessages((prev) => [...prev, botMessage]);
+      //  return;
+      //}
       try {
         setIsLoading(true);
         setShowSuggestions(false);
