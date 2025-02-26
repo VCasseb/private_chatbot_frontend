@@ -5,17 +5,20 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Send } from "lucide-react";
 
-//Balao
 const SuggestionsContainer = styled.div`
   display: flex;
-  align-items: center;
-  box-shadow: 0px 40px 40px 0px rgba(0, 0, 0, 0.2);
-  position: absolute; /* Permite posicionar com relação à tela */
-  bottom: 12%; /* Distância do fundo da tela, ajustável */
-  left: 50%; /* Centraliza horizontalmente */
-  transform: translateX(-50%); /* Ajusta a posição para o centro */
+  flex-direction: column; /* Organiza as sugestões em uma coluna */
+  align-items: flex-end; /* Alinha as sugestões à esquerda */
+  position: absolute; /* Alinha as sugestões dentro da posição relativa do input */
+  bottom: 60px; /* Distância do fundo do input (ajuste conforme necessário) */
+  left: 0; /* Alinha as sugestões à esquerda do container do input */
+  width: 100%; /* Ocupa toda a largura do container */
   animation: fadeIn 0.4s ease-in-out forwards;
-
+  
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
 `;
 
 const SuggestionBubble = styled.div`
@@ -25,6 +28,10 @@ const SuggestionBubble = styled.div`
   border-radius: 20px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
+  margin-bottom: 8px; /* Distância entre as sugestões */
+  
+  backdrop-filter: blur(10px); /* Efeito de blur */
+  background: rgba(0, 132, 255, 0.3); /* Fundo transparente com opacidade */
 
   &:hover {
     background-color: #2563eb;
@@ -506,15 +513,16 @@ export default function Chatbot() {
           ))}
           {isLoading && <LoadingMessage>Thinking</LoadingMessage>}
         </ChatContainer>
-        {/* Exibe as sugestões apenas se showSuggestions for true */}
-        {showSuggestions && suggestions.length > 0 && (
+
+        <InputContainer>
+                {/* Exibe as sugestões apenas se showSuggestions for true */}
+                {showSuggestions && suggestions.length > 0 && (
           <SuggestionsContainer>
             <SuggestionBubble onClick={() => handleSuggestionClick(suggestions[0])}>
               {suggestions[0]}
             </SuggestionBubble>
           </SuggestionsContainer>
         )}
-        <InputContainer>
           <Input
             type="text"
             placeholder="Type your message"
