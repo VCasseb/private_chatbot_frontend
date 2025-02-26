@@ -334,7 +334,7 @@ if (typeof window !== "undefined" && window.localStorage) {
 //  Componente Principal do Chatbot
 export default function Chatbot() {
   const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([
-    { text: "Hello! Before we get started, can you tell me what company are you from?", isUser: false },
+    { text: "Hello! Before we get started, can you tell me your name or which company you're from?", isUser: false },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
