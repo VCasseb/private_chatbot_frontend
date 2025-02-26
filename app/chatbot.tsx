@@ -40,12 +40,12 @@ const SuggestionBubble = styled.div`
 // Estilos com Styled Components
 const Container = styled.div`
   display: flex;
-  flex-direction: column; /* Melhor ajuste para telas pequenas */
+  flex-direction: column;
   height: 100vh;
   width: 100%;
   background: linear-gradient(135deg, #0c101c, #171e32);
   font-family: system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-weight: 600; /* Um pouco mais grosso, mas sem ser negrito total */
+  font-weight: 600;
   color: #f2ddcc;
 `;
 
@@ -61,6 +61,8 @@ const MainContent = styled.div`
     padding-left: clamp(20px, 20vw, 600px);
     padding-right: clamp(20px, 20vw, 600px);
   }
+
+  
 `;
 
 const Header = styled.div`
@@ -78,14 +80,14 @@ const Header = styled.div`
 const ChatContainer = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 1.5rem;
-  padding-bottom: 160px; /* Maior padding-bottom para dar espaço ao input */
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 120px; /* Reduz o padding-bottom para telas menores */
   display: flex;
   flex-direction: column;
 
-  /* Outros estilos da barra de rolagem */
   &::-webkit-scrollbar {
-    width: 7px;
+    width: 5px;
   }
 
   &::-webkit-scrollbar-track {
@@ -100,7 +102,7 @@ const ChatContainer = styled.div`
 `;
 
 const Message = styled.div<{ $isUser: boolean }>`
-  max-width: 60%;
+  max-width: 100%;
   padding: 12px 16px;
   border-radius: ${({ $isUser }) => ($isUser ? "12px 12px 0 12px" : "12px 12px 12px 0")};
   background: ${({ $isUser }) => $isUser && "linear-gradient(135deg, #3182ce, #2563eb)"};
@@ -133,6 +135,7 @@ const Message = styled.div<{ $isUser: boolean }>`
       transform: translateY(0);
     }
   }
+    
 `;
 
 
@@ -145,7 +148,7 @@ const InputContainer = styled.div`
   box-shadow: 0px 40px 40px 0px rgba(0, 0, 0, 0.2);
   background-color: #171e32;
   position: absolute; /* Permite posicionar com relação à tela */
-  bottom: 3%; /* Distância do fundo da tela, ajustável */
+  bottom: 2%; /* Distância do fundo da tela, ajustável */
   left: 50%; /* Centraliza horizontalmente */
   transform: translateX(-50%); /* Ajusta a posição para o centro */
   width: 40%;
@@ -178,7 +181,7 @@ const Input = styled.input`
 const Button = styled.button`
   margin-left: 1rem;
   padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
+  background:  #2563eb;
   cursor: pointer;
   border: none;
   border-radius: 12px;
