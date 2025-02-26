@@ -14,7 +14,7 @@ const SuggestionsContainer = styled.div`
   bottom: 12%; /* Distância do fundo da tela, ajustável */
   left: 50%; /* Centraliza horizontalmente */
   transform: translateX(-50%); /* Ajusta a posição para o centro */
-
+  animation: fadeIn 0.4s ease-in-out forwards;
 
 `;
 
@@ -339,8 +339,8 @@ export default function Chatbot() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([
-    "About Vinicius",
     "How old is Vinicius?",
+    "About Vinicius",
     "What certifications does Vinicius have?",
     "Tell me about graduation of Vinicius?",
     "What is vinicius's email?",
@@ -399,6 +399,7 @@ export default function Chatbot() {
     } else {
       try {
         setIsLoading(true);
+        setShowSuggestions(false);
         const response = await fetch('https://privatechatbotia-dpbye3cdbmandchy.brazilsouth-01.azurewebsites.net/perguntar/', {
           method: 'POST',
           headers: {
@@ -411,7 +412,7 @@ export default function Chatbot() {
 
         const data = await response.json();
         const botMessage = { text: data.resposta, isUser: false };
-
+        setShowSuggestions(true);
         console.log(botMessage);
         if (typeof window !== "undefined" && window.localStorage) {
         localStorage.setItem('dtsent', formattedTime);
