@@ -15,23 +15,24 @@ const SuggestionsContainer = styled.div`
   width: 100%; /* Ocupa toda a largura do container */
   animation: fadeIn 0.4s ease-in-out forwards;
   
-  
   @media (max-width: 768px) {
     font-size: 0.7rem;
   }
 `;
 
 const SuggestionBubble = styled.div`
+
   padding: 8px 12px;
-  background-color: #3182ce;
+
   color: white;
   border-radius: 20px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
   margin-bottom: 8px; /* Distância entre as sugestões */
-  
-  backdrop-filter: blur(10px); /* Efeito de blur */
-  background: rgba(0, 132, 255, 0.3); /* Fundo transparente com opacidade */
+  background-color: rgba(0, 132, 255, 0.3); /* Use background-color em vez de background */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
 
   &:hover {
     background-color: #2563eb;
@@ -410,17 +411,7 @@ export default function Chatbot() {
       }
       firstmessage = false;
     } else {
-                // Se a mensagem do usuário mencionar "LinkedIn", envie a imagem clicável
-      //if (msg.toLowerCase().includes("linkedin")) {
-      //  const botMessage = {
-      //    text: `<a href="https://www.linkedin.com/in/vinicius-cezar-casseb-a1b803189/" target="_blank">
-      //            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" width="50"/>
-      //          </a>`,
-      //    isUser: false,
-      //  };
-      //  setMessages((prev) => [...prev, botMessage]);
-      //  return;
-      //}
+
       try {
         setIsLoading(true);
         setShowSuggestions(false);
@@ -436,6 +427,7 @@ export default function Chatbot() {
 
         const data = await response.json();
         const botMessage = { text: data.resposta, isUser: false };
+
         setShowSuggestions(true);
         console.log(botMessage);
         if (typeof window !== "undefined" && window.localStorage) {
@@ -446,6 +438,16 @@ export default function Chatbot() {
         localStorage.setItem('contexto_faiss', data.contexto);
         }
         setMessages((prev) => [...prev, botMessage]);
+                      // Se a mensagem do usuário mencionar "LinkedIn", envie a imagem clicável
+      if (msg.toLowerCase().includes("linkedin")) {
+        const botMessage = {
+          text: `<a href="https://www.linkedin.com/in/vinicius-cezar-casseb-a1b803189/" target="_blank" style="background: none !important; border: none !important; padding: 0 !important; display: inline-block;">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/LinkedIn_icon.svg/2048px-LinkedIn_icon.svg.png" alt="LinkedIn" width="50" height="50" style="max-width: 50px; height: auto; background: none !important; border: none !important; padding: 0 !important;"/>
+                </a>`,
+          isUser: false,
+        };
+        setMessages((prev) => [...prev, botMessage]);
+      }
       } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
         const errorMessage = { text: 'Sorry, something is wrong :/', isUser: false };
